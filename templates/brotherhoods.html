@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+
+
+    <div class="container py-5">
+        <h3 class="mb-4 text-center" style="color: #062D76">BrotherHoods</h3>
+
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped" id="previewTable">
+                <thead></thead>
+                <tbody>
+
+                {% for h in list_brotherhoods %}
+
+                    <tr>
+
+                        <td>{{ h.code }}</td>
+                        <td>{{ h.name }}</td>
+                        <td>{{ h.day }}</td>
+                        <td><img class="img-fluid" src="{{ h.logo }}" alt="{{ h.name }}"></td>
+
+
+                    </tr>
+
+
+
+                {% endfor %}
+
+
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+
+{% endblock %}

@@ -55,28 +55,20 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 
-
-
-
-
 #MONGODB MODELS
-class Character(models.Model):
+class BrotherHoods(models.Model):
     code= models.IntegerField(null=False)
-    firstName= models.CharField(max_length=150)
-    lastName= models.CharField(max_length=150)
-    fullName = models.CharField(max_length=300)
-    title = models.CharField(max_length=300)
-    family = models.CharField(max_length=100)
-    image= models.CharField(max_length=300)
-    imageUrl = models.CharField(max_length=800)
+    name= models.CharField(max_length=150)
+    logo= models.URLField(max_length=900)
+    day = models.CharField(max_length=300)
     categories = ArrayField(models.IntegerField(), null=True, blank=True, default=list)
 
     class Meta:
-        db_table = 'characters'
+        db_table = 'brotherhoods'
         managed = False
 
     def __str__(self):
-        return self.fullName
+        return self.name
 
 
 class Category(EmbeddedModel):

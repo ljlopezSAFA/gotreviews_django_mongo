@@ -84,7 +84,7 @@ DATABASES = {
     "mongodb": {
         "ENGINE": "django_mongodb_backend",
         "HOST": "mongodb://localhost:27017/",
-        "NAME": "gotreviews",
+        "NAME": "cofradecheck",
     }
 }
 

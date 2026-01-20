@@ -9,11 +9,11 @@ def go_home(request):
     return render(request, 'inicio.html' )
 
 
-def show_characters(request):
+def show_brotherhoods(request):
 
-    list_characters = Character.objects.all()
+    list_brotherhoods = BrotherHoods.objects.all()
 
-    return render(request, 'characters.html', {"list": list_characters} )
+    return render(request, 'brotherhoods.html', {'list_brotherhoods': list_brotherhoods})
 
 
 def do_login(request):
@@ -70,16 +70,32 @@ def admin_panel(request):
 
 
 def data_load(request):
+
+
     if request.method == "POST":
-
-
         uploaded_file = request.FILES.get('csvFile')
 
         if not uploaded_file:
             return render(request, 'data_load.html', {'error': 'No se seleccionó ningún archivo.'})
 
+        decoded_file = uploaded_file.read().decode('utf-8').splitlines()
+        reader = csv.DictReader(decoded_file)
 
-        return render(request, 'data_load.html')
+        code_row = 1
+
+        for row in reader:
+            brotherHood = BrotherHoods()
+            brotherHood.name = row['Hermandad']
+            brotherHood.day = row['Día']
+            brotherHood.logo = row['Logo']
+            brotherHood.code= code_row
+            brotherHood.save()
+            code_row += 1
+
+
+
+
+
 
     return render(request, 'data_load.html')
 
