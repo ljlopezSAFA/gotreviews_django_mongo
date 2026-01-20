@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+    <div class="container py-5">
+        <h3 class="mb-4 text-center" style="color: #062D76">Load Data</h3>
+
+        <form id="csvForm" method="post" enctype="multipart/form-data" class="card p-4 shadow-sm">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="csvFile" class="form-label">Seleccionar archivo CSV</label>
+                <input class="form-control" type="file" id="csvFile" name="csvFile" accept=".csv" required>
+            </div>
+
+            <div class="d-flex justify-content-center gap-3 mt-3">
+                <button type="button" id="previewBtn" class="btn bg-yellow">Previsualizar</button>
+                <button type="submit" class="btn bg-dark-blue" style="color: whitesmoke">Guardar</button>
+            </div>
+        </form>
+
+        <div id="previewContainer" class="mt-5" style="display:none;">
+            <h4>Vista previa del archivo:</h4>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="previewTable">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.getElementById('previewBtn').addEventListener('click', function () {
+            const fileInput = document.getElementById('csvFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Por favor selecciona un archivo CSV primero.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const text = e.target.result;
+                const rows = text.split('\n').map(row => row.split(','));
+
+                const tableHead = document.querySelector('#previewTable thead');
+                const tableBody = document.querySelector('#previewTable tbody');
+                tableHead.innerHTML = '';
+                tableBody.innerHTML = '';
+
+                // Encabezados
+                if (rows.length > 0) {
+                    const headerRow = document.createElement('tr');
+                    rows[0].forEach(header => {
+                        const th = document.createElement('th');
+                        th.textContent = header.trim();
+                        headerRow.appendChild(th);
+                    });
+                    tableHead.appendChild(headerRow);
+                }
+
+                // Mostrar solo 5 filas
+                rows.slice(1, 6).forEach(row => {
+                    const tr = document.createElement('tr');
+
+                    row.forEach((cell, index) => {
+                        const td = document.createElement('td');
+                        const value = cell.trim();
+
+                        // Si NO es la primera columna, lo tratamos como URL de página web
+                        if (index !== 0 && index!==2 && value) {
+                            const link = document.createElement('a');
+                            link.href = value;
+                            link.target = "_blank"; // Abrir en nueva pestaña
+
+                            // Crear imagen dentro del link
+                            const img = document.createElement('img');
+                            img.src = value;  // Usamos la misma URL como src
+                            img.alt = 'preview';
+                            img.style.width = '64px';
+                            img.style.height = '64px';
+                            img.style.objectFit = 'cover';
+                            img.style.borderRadius = '8px';
+                            img.style.boxShadow = '0 0 4px rgba(0,0,0,0.2)';
+
+                            link.appendChild(img);
+                            td.appendChild(link);
+                        } else {
+                            td.textContent = value;
+                        }
+
+                        tr.appendChild(td);
+                    });
+
+                    tableBody.appendChild(tr);
+                });
+
+                document.getElementById('previewContainer').style.display = 'block';
+            };
+
+            reader.readAsText(file);
+        });
+    </script>
+
+
+{% endblock %}

@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from gotreviews.forms import *
 from gotreviews.models import *
+import csv
 
 # Create your views here.
 def go_home(request):
@@ -62,6 +63,25 @@ def logout_user(request):
     logout(request)
     return render(request, 'inicio.html')
 
+
+
+def admin_panel(request):
+    return render(request, 'admin.html')
+
+
+def data_load(request):
+    if request.method == "POST":
+
+
+        uploaded_file = request.FILES.get('csvFile')
+
+        if not uploaded_file:
+            return render(request, 'data_load.html', {'error': 'No se seleccionó ningún archivo.'})
+
+
+        return render(request, 'data_load.html')
+
+    return render(request, 'data_load.html')
 
 
 

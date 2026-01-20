@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+
+    <!-- Contenedor principal centrado -->
+    <div class="container d-flex flex-column justify-content-start align-items-center vh-100 pt-5">
+
+        <!-- Primera fila -->
+        <div class="row g-4 justify-content-center w-100">
+            <!-- Admin -->
+            <div class="col-4 col-md-4">
+                <a href="{% url 'go_data_load' %}" class="text-decoration-none text-white">
+                    <div class="card text-center text-white bg-yellow card-hover " >
+                        <div class="card-body py-5">
+                            <img src="{% static 'images/data_load.png' %}" alt="Admin" width="64" height="64"
+                                 class="icon-white mb-3">
+                            <h3 class="card-title">Data Load</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-4 col-md-4">
+                <div class="card text-center text-white bg-yellow card-hover " role="button"
+                     onclick="location.href='{% url 'go_home' %}'">
+                    <div class="card-body py-5">
+                        <img src="{% static 'images/category.png' %}" alt="Admin" width="64" height="64"
+                             class="icon-white mb-3">
+                        <h3 class="card-title">Categories Management</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 col-md-4">
+                <div class="card text-center text-white bg-yellow card-hover " role="button"
+                     onclick="location.href='{% url 'go_home' %}'">
+                    <div class="card-body py-5">
+                        <img src="{% static 'images/users.png' %}" alt="Admin" width="64" height="64"
+                             class="icon-white mb-3">
+                        <h3 class="card-title">Users Panel</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
