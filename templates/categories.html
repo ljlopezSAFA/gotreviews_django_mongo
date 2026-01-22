@@ -23,8 +23,8 @@
                     <td>
                         <a href="{% url 'delete_category' item.code %}" class="text-decoration-none text-white">
                             <img src="https://cdn-icons-png.flaticon.com/512/11540/11540197.png" alt="Delete"
-                                        width="30" height="30"
-                                        class="icon-white mb-3">
+                                 width="30" height="30"
+                                 class="icon-white mb-3">
                         </a>
                     </td>
                 </tr>
@@ -59,13 +59,15 @@
             <!-- Input oculto para brotherhoods seleccionadas -->
             <input type="hidden" name="brotherhoods" id="selectedBrotherhoods">
 
-            <button type="submit" class="btn bg-dark-blue mt-3">Create Category</button>
+            <div class="mb-3">
+                <button type="submit" class="btn bg-dark-blue mt-3" style="color: whitesmoke;">Create Category</button>
+            </div>
         </form>
     </div>
 
     <!-- ====================== Brotherhoods ====================== -->
     <div class="container py-5">
-        <h3 class="mb-4 text-center" style="color: #062D76">Brotherhoods</h3>
+        <h3 class="mb-4 text-center" style="color: #062D76;">Brotherhoods</h3>
 
         <div class="row g-3" id="all-items">
             {% for item in brotherhoods %}
