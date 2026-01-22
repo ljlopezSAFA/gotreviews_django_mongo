@@ -1,14 +1,9 @@
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils import timezone
 from django_mongodb_backend.fields import ArrayField
 from django_mongodb_backend.models import EmbeddedModel
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
-from django.db import models
-
-
-#pyhton manage.py make migrations --> PREPARA SQL SCRIPT
-#python manage.py migrate --> SCRIPT --> BBDD
 
 
 #Create your models here.
@@ -61,7 +56,7 @@ class BrotherHoods(models.Model):
     name= models.CharField(max_length=150)
     logo= models.URLField(max_length=900)
     day = models.CharField(max_length=300)
-    categories = ArrayField(models.IntegerField(), null=True, blank=True, default=list)
+
 
     class Meta:
         db_table = 'brotherhoods'
@@ -71,10 +66,12 @@ class BrotherHoods(models.Model):
         return self.name
 
 
-class Category(EmbeddedModel):
+class Category(models.Model):
     code = models.IntegerField(null=False, unique=True)
     name= models.CharField(max_length=150, unique=True)
     description= models.CharField(max_length=300)
+    logo  = models.CharField(max_length=900)
+    brotherhoods = ArrayField(models.IntegerField(), null=True, blank=True, default=list)
 
     class Meta:
         db_table = 'categories'
@@ -84,7 +81,7 @@ class Category(EmbeddedModel):
         return self.name
 
 
-class Review(EmbeddedModel):
+class Review(models.Model):
    user = models.CharField(max_length=150)
    characterCode = models.IntegerField(null=False)
    reviewDate = models.DateField(default=timezone.now)
@@ -99,11 +96,11 @@ class Review(EmbeddedModel):
        managed = False
 
 
-class Ranking(EmbeddedModel):
+class Ranking(models.Model):
     user = models.CharField(max_length=150)
     rankinDate = models.DateField(default=timezone.now)
     categoryCode = models.IntegerField(null=False)
-    rankinList = ArrayField(models.IntegerField(), null=True, blank=True, default=list)
+    rankinList = ArrayField(models.JSONField(), null=True, blank=True, default=list)
 
     def __str__(self):
         return self.user +  str(self.categoryCode)

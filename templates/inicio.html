@@ -4,19 +4,20 @@
 {% block body %}
 
     <!-- Contenedor principal centrado -->
-   <div class="container d-flex flex-column justify-content-start align-items-center vh-100 pt-5">
+    <div class="container d-flex flex-column justify-content-start align-items-center vh-100 pt-5">
         <!-- Primera fila -->
         <div class="row g-4 justify-content-center w-100">
             <!-- Rankings -->
             <div class="col-10 col-md-4">
-                <div class="card text-center text-white bg-dark-blue card-hover" role="button"
-                     onclick="location.href='{% url 'go_home' %}'">
-                    <div class="card-body py-5">
-                        <img src="{% static 'images/rankings.png' %}" alt="Rankings" width="64" height="64"
-                             class="icon-white mb-3">
-                        <h3 class="card-title">Rankings</h3>
+                <a href="{% url 'show_categories' %}" class="text-decoration-none text-white">
+                    <div class="card text-center text-white bg-dark-blue card-hover" role="button">
+                        <div class="card-body py-5">
+                            <img src="{% static 'images/rankings.png' %}" alt="Rankings" width="64" height="64"
+                                 class="icon-white mb-3">
+                            <h3 class="card-title">Rankings</h3>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
             <!-- Reviews -->
             <div class="col-10 col-md-4">

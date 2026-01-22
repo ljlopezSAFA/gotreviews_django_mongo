@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+    <div class="container py-4">
+        <h2 class="text-center mb-4">Brotherhoods Ranking</h2>
+
+        <!-- Contenedor del TOP 10 -->
+        <h4 class="text-center mb-4">Ranking</h4>
+        <div class="row g-3" id="top-slots">
+            {% for item in items %}
+                {% if forloop.counter == 1 %}
+                    <div class="col-2 col-md-2" style="background-color: goldenrod;">
+                        <div class="border rounded p-3 bg-white text-center slot"
+                             data-position="{{ forloop.counter }}">
+                            <h5 class="mb-3">
+                                <img src="https://cdn-icons-png.flaticon.com/512/1910/1910528.png"
+                                     alt="{{ forloop.counter }}" style="width: 30px; height: 30px;">
+                            </h5>
+                            <div class="slot-drop-area" style=";min-height: 50px;"></div>
+                        </div>
+                    </div>
+                {% elif forloop.counter == 2 %}
+                    <div class="col-2 col-md-2" style="background-color: silver;">
+                        <div class="border rounded p-3 bg-white text-center slot" data-position="{{ forloop.counter }}">
+                            <h5 class="mb-3">
+                                <img src="https://cdn-icons-png.flaticon.com/512/1910/1910534.png"
+                                     alt="{{ forloop.counter }}" style="width: 30px; height: 30px;">
+                            </h5>
+                            <div class="slot-drop-area" style=";min-height: 50px;"></div>
+                        </div>
+                    </div>
+                {% elif forloop.counter == 3 %}
+                    <div class="col-2 col-md-2" style="background-color: saddlebrown;">
+                        <div class="border rounded p-3 bg-white text-center slot"
+                             data-position="{{ forloop.counter }}">
+                            <h5 class="mb-3">
+                                <img src="https://cdn-icons-png.flaticon.com/512/1910/1910542.png"
+                                     alt="{{ forloop.counter }}" style="width: 30px; height: 30px;">
+                            </h5>
+                            <div class="slot-drop-area" style=";min-height: 50px;"></div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col-2 col-md-2">
+                        <div class="border rounded p-3 bg-white text-center slot"
+                             data-position="{{ forloop.counter }}">
+                            <h5 class="mb-3">{{ forloop.counter }}</h5>
+                            <div class="slot-drop-area" style=";min-height: 50px;"></div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <hr class="my-4">
+
+        <!-- Contenedor de todos los elementos -->
+        <h4 class="text-center mb-3">Todos los elementos</h4>
+        <div class="row g-3" id="all-items">
+            {% for item in items %}
+                <div class="col-2 col-md-2">
+                    <div class="card p-3 text-center bg-light d-flex flex-column justify-content-start align-items-center"
+                         data-id="{{ item.code }}">
+                        <img src="{{ item.logo }}" class="mb-2" alt="{{ item.name }}"
+                             style="height:60px; width:60px; object-fit:cover;">
+                        <h6 class="m-0">{{ item.name }}</h6>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <form id="saveTopForm" method="POST" action="{% url 'save_top' %}">
+            {% csrf_token %}
+            <div class="text-center mt-4">
+                <input type="hidden" name="category_size" id="category_size" value="{{ category_size }}">
+                <input type="hidden" name="category_code" id="category_code" value="{{ category_code }}">
+                <input type="hidden" name="order" id="orderInput">
+                <button class="btn bg-dark-blue" id="saveTopBtn">Guardar Top</button>
+            </div>
+        </form>
+
+
+    </div>
+
+    <!-- SortableJS -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const allItems = document.getElementById('all-items');
+
+            // Contenedor de todos los elementos → mover en lugar de clonar
+            Sortable.create(allItems, {
+                group: {name: 'shared', pull: true, put: false}, // mover elementos reales
+                sort: false,
+                animation: 150
+            });
+
+            // Slots del Top
+            document.querySelectorAll('.slot-drop-area').forEach((slotArea) => {
+                Sortable.create(slotArea, {
+                    group: 'shared',
+                    animation: 150,
+                    sort: false,
+                    onAdd: (evt) => {
+                        // Solo un elemento por slot
+                        if (slotArea.children[0].children.length > 1) {
+                            evt.from.appendChild(evt.item); // regresa el nuevo al contenedor original
+                            return;
+                        }
+                        evt.item.style.width = '100%';
+                    }
+                });
+            });
+
+            // Guardar Top
+            document.getElementById('saveTopBtn').addEventListener('click', (event) => {
+                event.preventDefault();
+
+                const order = [];
+                document.querySelectorAll('.slot').forEach((slot) => {
+                    const position = slot.dataset.position;
+                    const card = slot.querySelector('.card');
+                    if (card) {
+                        order.push({
+                            position: position,
+                            id: card.dataset.id
+                        });
+                    }
+                });
+
+                // Convertir a JSON y enviar en el input oculto
+                document.getElementById('orderInput').value = JSON.stringify(order);
+                document.getElementById('saveTopForm').submit();
+            });
+        });
+
+    </script>
+
+
+    <style>
+        /* Mantener tamaño y proporción de las tarjetas al arrastrar */
+        .card {
+            width: 100%;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .card img {
+            object-fit: cover;
+        }
+
+        /* Cursor al arrastrar */
+        .card.dragging {
+            cursor: grabbing;
+        }
+
+        /* Visual para los slots */
+        .slot {
+            min-height: 180px;
+            transition: background 0.2s;
+        }
+
+        .slot:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Zona de drop */
+        .slot-drop-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+{% endblock %}

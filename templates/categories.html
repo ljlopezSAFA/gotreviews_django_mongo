@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+    <!-- ====================== Categories Table ====================== -->
+    <div class="container py-5">
+        <h3 class="mb-4 text-center" style="color: #062D76">Categories</h3>
+        <table class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in categories %}
+                <tr>
+                    <td>{{ item.code }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.description }}</td>
+                    <td>
+                        <a href="{% url 'delete_category' item.code %}" class="text-decoration-none text-white">
+                            <img src="https://cdn-icons-png.flaticon.com/512/11540/11540197.png" alt="Delete"
+                                        width="30" height="30"
+                                        class="icon-white mb-3">
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ====================== New Category Form ====================== -->
+    <div class="container py-5">
+        <h3 class="mb-4 text-center" style="color: #062D76">New Category</h3>
+        <form method="POST" id="categoryForm">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <input type="text" class="form-control" id="description" name="description"
+                       placeholder="..." required>
+            </div>
+
+            <div class="mb-3">
+                <label for="logo" class="form-label">Logo</label>
+                <input type="text" class="form-control" id="logo" name="logo"
+                       placeholder="https://example.com/foto.jpg" required>
+            </div>
+
+            <!-- Input oculto para brotherhoods seleccionadas -->
+            <input type="hidden" name="brotherhoods" id="selectedBrotherhoods">
+
+            <button type="submit" class="btn bg-dark-blue mt-3">Create Category</button>
+        </form>
+    </div>
+
+    <!-- ====================== Brotherhoods ====================== -->
+    <div class="container py-5">
+        <h3 class="mb-4 text-center" style="color: #062D76">Brotherhoods</h3>
+
+        <div class="row g-3" id="all-items">
+            {% for item in brotherhoods %}
+                <div class="col-2 col-md-2">
+                    <div class="card p-3 text-center bg-light d-flex flex-column justify-content-start align-items-center"
+                         data-id="{{ item.code }}">
+                        <img src="{{ item.logo }}" class="mb-2" alt="{{ item.name }}"
+                             style="height:40px; width:40px; object-fit:cover;">
+                        <p class="m-0">{{ item.name }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- ====================== JS ====================== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('#all-items .card');
+            const selectedInput = document.getElementById('selectedBrotherhoods');
+            const form = document.getElementById('categoryForm');
+
+            // Marcar/desmarcar cards al hacer clic
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.toggle('selected'); // agrega clase visual
+                });
+            });
+
+            // Antes de enviar, actualizar el input oculto con los ids seleccionados
+            form.addEventListener('submit', (e) => {
+                const selected = Array.from(cards)
+                    .filter(c => c.classList.contains('selected'))
+                    .map(c => c.dataset.id); // tomamos el data-id de cada card
+
+                selectedInput.value = JSON.stringify(selected); // como string JSON
+            });
+        });
+    </script>
+
+    <!-- ====================== CSS ====================== -->
+    <style>
+        .card.selected {
+            border: 2px solid #062D76;
+            background-color: #dce6f1;
+        }
+
+        .card {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+    </style>
+{% endblock %}
